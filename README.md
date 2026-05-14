@@ -62,4 +62,8 @@ The app expects the following collections:
 
 ## License
 
-MIT
+This project is licensed under the MIT License.
+
+## Author
+
+Developed with ❤️ for social impact and smarter food distribution.
