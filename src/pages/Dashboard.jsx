@@ -177,31 +177,42 @@ export default function Dashboard() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8 pb-12">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="space-y-8 pb-12"
+      >
         <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Welcome, {userData?.displayName || 'Partner'}!
+              Welcome, {userData?.displayName?.split(' ')[0] || 'User'}!
             </h1>
             <p className="text-gray-600 dark:text-gray-400 mt-1">
-              Your {role} dashboard for FoodBridge redistribution.
+              Your {userData?.role || role} dashboard for FoodBridge redistribution.
             </p>
           </div>
           <div className="flex gap-3">
             {role === 'donor' && (
-              <Link to="/donate" className="bg-primary-600 text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg shadow-primary-200 dark:shadow-none hover:bg-primary-700 transition-all flex items-center">
-                <PlusCircle size={18} className="mr-2" /> New Donation
-              </Link>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Link to="/donate" className="bg-primary-600 text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg shadow-primary-200 dark:shadow-none hover:bg-primary-700 transition-all flex items-center">
+                  <PlusCircle size={18} className="mr-2" /> New Donation
+                </Link>
+              </motion.div>
             )}
             {role === 'ngo' && (
-              <Link to="/nearby-donations" className="bg-primary-600 text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg shadow-primary-200 dark:shadow-none hover:bg-primary-700 transition-all flex items-center">
-                <Search size={18} className="mr-2" /> Find Food
-              </Link>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Link to="/nearby-donations" className="bg-primary-600 text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg shadow-primary-200 dark:shadow-none hover:bg-primary-700 transition-all flex items-center">
+                  <Search size={18} className="mr-2" /> Find Food
+                </Link>
+              </motion.div>
             )}
             {role === 'volunteer' && (
-              <Link to="/pickups" className="bg-primary-600 text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg shadow-primary-200 dark:shadow-none hover:bg-primary-700 transition-all flex items-center">
-                <Truck size={18} className="mr-2" /> New Pickup
-              </Link>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Link to="/pickups" className="bg-primary-600 text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg shadow-primary-200 dark:shadow-none hover:bg-primary-700 transition-all flex items-center">
+                  <Truck size={18} className="mr-2" /> New Pickup
+                </Link>
+              </motion.div>
             )}
           </div>
         </header>
@@ -210,16 +221,25 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat, i) => (
             <motion.div
+              key={i}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
-              key={i}
-              className="bg-white dark:bg-gray-900 p-6 rounded-3xl shadow-sm border dark:border-gray-800 hover:shadow-md transition-shadow"
+              whileHover={{ 
+                y: -10, 
+                scale: 1.02,
+                boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+                transition: { duration: 0.2 } 
+              }}
+              className="bg-white dark:bg-gray-900 p-6 rounded-3xl shadow-sm border dark:border-gray-800 transition-all cursor-default"
             >
               <div className="flex items-center justify-between mb-4">
-                <div className={`p-3 rounded-2xl ${stat.bg} ${stat.color}`}>
+                <motion.div 
+                  whileHover={{ rotate: 15 }}
+                  className={`p-3 rounded-2xl ${stat.bg} ${stat.color}`}
+                >
                   <stat.icon size={24} />
-                </div>
+                </motion.div>
                 <span className="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-lg">+12%</span>
               </div>
               <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">{stat.label}</p>
@@ -242,12 +262,29 @@ export default function Dashboard() {
               <span className="text-xs font-bold text-amber-600 bg-amber-100 px-2 py-1 rounded-lg animate-pulse">Action Required</span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {expiringSoon.map((item) => (
-                <div key={item.id} className="bg-white dark:bg-gray-900 p-4 rounded-2xl shadow-sm border dark:border-gray-800 flex items-center justify-between">
+              {expiringSoon.map((item, i) => (
+                <motion.div 
+                  key={item.id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: i * 0.1 }}
+                  whileHover={{ scale: 1.03 }}
+                  className="bg-white dark:bg-gray-900 p-4 rounded-2xl shadow-sm border dark:border-gray-800 flex items-center justify-between"
+                >
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-red-50 dark:bg-red-900/20 text-red-600 rounded-xl">
+                    <motion.div 
+                      animate={{ 
+                        scale: [1, 1.2, 1],
+                      }}
+                      transition={{ 
+                        duration: 2, 
+                        repeat: Infinity,
+                        ease: "easeInOut" 
+                      }}
+                      className="p-2 bg-red-50 dark:bg-red-900/20 text-red-600 rounded-xl"
+                    >
                       <AlertCircle size={18} />
-                    </div>
+                    </motion.div>
                     <div>
                       <p className="text-sm font-bold dark:text-white truncate w-32">{item.foodName}</p>
                       <p className="text-[10px] text-gray-500">Expires: {new Date(item.expiryTime).toLocaleTimeString()}</p>
@@ -256,7 +293,7 @@ export default function Dashboard() {
                   <Link to={role === 'donor' ? '/my-donations' : '/nearby-donations'} className="text-primary-600 hover:text-primary-700">
                     <ArrowUpRight size={18} />
                   </Link>
-                </div>
+                </motion.div>
               ))}
             </div>
           </motion.div>
@@ -329,7 +366,7 @@ export default function Dashboard() {
             </Link>
           </div>
         </div>
-      </div>
+      </motion.div>
     </DashboardLayout>
   );
 }

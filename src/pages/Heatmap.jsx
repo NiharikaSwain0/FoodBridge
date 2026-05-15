@@ -148,7 +148,14 @@ export default function Heatmap() {
     iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
   });
 
-  const urgentIcon = getIcon('red');
+  const getUrgentIcon = () => L.divIcon({
+    className: 'custom-div-icon',
+    html: `<div class='animate-pulse-slow' style='background-color:#ef4444; width:15px; height:15px; border-radius:50%; border:2px solid white; box-shadow:0 0 10px rgba(239,68,68,0.5)'></div>`,
+    iconSize: [15, 15],
+    iconAnchor: [7, 7]
+  });
+
+  const urgentIcon = getUrgentIcon();
   const mediumIcon = getIcon('gold');
   const sufficientIcon = getIcon('green');
 
@@ -216,9 +223,27 @@ export default function Heatmap() {
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 <HeatmapLayer data={heatmapData} />
                 {urgentAreas.map(area => (
-                  <Marker key={area.id} position={[area.location.latitude, area.location.longitude]} icon={urgentIcon}>
-                    <Popup><div className="p-1"><h4 className="font-bold">{area.area || 'Urgent'}</h4><p className="text-red-600">Score: {area.hungerScore}</p></div></Popup>
-                  </Marker>
+                  area.location && area.location.latitude && area.location.longitude && (
+                    <Marker 
+                      key={area.id} 
+                      position={[area.location.latitude, area.location.longitude]}
+                      icon={urgentIcon}
+                    >
+                      <Popup>
+                        <motion.div 
+                          initial={{ scale: 0.8, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          className="p-1"
+                        >
+                          <h4 className="font-bold text-gray-900">{area.area || 'Unknown Area'}</h4>
+                          <p className="text-sm text-red-600 font-semibold">Hunger Score: {area.hungerScore}</p>
+                          <div className="mt-2 flex items-center text-[10px] text-red-500 font-bold animate-pulse">
+                            <AlertCircle size={10} className="mr-1" /> URGENT ASSISTANCE NEEDED
+                          </div>
+                        </motion.div>
+                      </Popup>
+                    </Marker>
+                  )
                 ))}
                 {mediumAreas.map(area => (
                   <Marker key={area.id} position={[area.location.latitude, area.location.longitude]} icon={mediumIcon}>

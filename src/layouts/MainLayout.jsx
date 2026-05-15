@@ -1,13 +1,19 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
+import { motion } from 'framer-motion';
 
 export default function MainLayout({ children }) {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors duration-300">
       <Navbar />
-      <main>
+      <motion.main
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+      >
         {children}
-      </main>
+      </motion.main>
       <footer className="bg-gray-50 dark:bg-gray-900 py-12 border-t dark:border-gray-800 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">

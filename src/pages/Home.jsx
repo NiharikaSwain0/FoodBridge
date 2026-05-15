@@ -117,24 +117,39 @@ export default function Home() {
       {/* Stats Section */}
       <section className="py-12 bg-gray-50 dark:bg-gray-900/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <p className="text-4xl font-bold text-primary-600">50k+</p>
-              <p className="text-gray-600 dark:text-gray-400">Meals Saved</p>
-            </div>
-            <div>
-              <p className="text-4xl font-bold text-primary-600">200+</p>
-              <p className="text-gray-600 dark:text-gray-400">Partner NGOs</p>
-            </div>
-            <div>
-              <p className="text-4xl font-bold text-primary-600">1.2k+</p>
-              <p className="text-gray-600 dark:text-gray-400">Volunteers</p>
-            </div>
-            <div>
-              <p className="text-4xl font-bold text-primary-600">15+</p>
-              <p className="text-gray-600 dark:text-gray-400">Cities Active</p>
-            </div>
-          </div>
+          <motion.div 
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            variants={{
+              hidden: { opacity: 0 },
+              show: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.1
+                }
+              }
+            }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
+          >
+            {[
+              { value: '50k+', label: 'Meals Saved' },
+              { value: '200+', label: 'Partner NGOs' },
+              { value: '1.2k+', label: 'Volunteers' },
+              { value: '15+', label: 'Cities Active' },
+            ].map((stat, i) => (
+              <motion.div 
+                key={i}
+                variants={{
+                  hidden: { opacity: 0, scale: 0.8 },
+                  show: { opacity: 1, scale: 1 }
+                }}
+              >
+                <p className="text-4xl font-bold text-primary-600">{stat.value}</p>
+                <p className="text-gray-600 dark:text-gray-400">{stat.label}</p>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
@@ -147,22 +162,48 @@ export default function Home() {
               We use technology to bridge the gap between food surplus and food scarcity.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <motion.div 
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            variants={{
+              hidden: { opacity: 0 },
+              show: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.2
+                }
+              }
+            }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+          >
             {features.map((feature, index) => (
-              <div 
+              <motion.div 
                 key={index}
-                className="p-8 bg-gray-50 dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 transition-all hover:-translate-y-2"
+                variants={{
+                  hidden: { opacity: 0, y: 30 },
+                  show: { opacity: 1, y: 0 }
+                }}
+                whileHover={{ 
+                  y: -10,
+                  transition: { duration: 0.3 }
+                }}
+                className="p-8 bg-gray-50 dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 transition-all hover:shadow-xl group"
               >
-                <div className={`w-14 h-14 rounded-2xl ${feature.color} flex items-center justify-center mb-6`}>
+                <motion.div 
+                  whileHover={{ rotate: 360 }}
+                  transition={{ duration: 0.5 }}
+                  className={`w-14 h-14 rounded-2xl ${feature.color} flex items-center justify-center mb-6 shadow-sm`}
+                >
                   <feature.icon size={28} />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">{feature.title}</h3>
+                </motion.div>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 group-hover:text-primary-600 transition-colors">{feature.title}</h3>
                 <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
                   {feature.description}
                 </p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -179,7 +220,14 @@ export default function Home() {
                   { title: 'Volunteer Pick-up', text: 'Verified volunteers accept the delivery task.' },
                   { title: 'Safe Delivery', text: 'Food is delivered safely with QR code verification.' },
                 ].map((step, i) => (
-                  <div key={i} className="flex items-start space-x-4">
+                  <motion.div 
+                    key={i} 
+                    initial={{ opacity: 0, x: -30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.2 }}
+                    className="flex items-start space-x-4"
+                  >
                     <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary-600 text-white flex items-center justify-center font-bold">
                       {i + 1}
                     </div>
@@ -187,11 +235,37 @@ export default function Home() {
                       <h4 className="text-lg font-bold text-gray-900 dark:text-white">{step.title}</h4>
                       <p className="text-gray-600 dark:text-gray-400">{step.text}</p>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </div>
-            <div className="relative">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="relative"
+            >
+              {/* Floating notification element */}
+              <motion.div
+                animate={{ 
+                  y: [0, -10, 0],
+                }}
+                transition={{ 
+                  duration: 4, 
+                  repeat: Infinity,
+                  ease: "easeInOut" 
+                }}
+                className="absolute -top-12 -left-12 bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-xl border dark:border-gray-700 z-10 hidden lg:flex items-center space-x-3"
+              >
+                <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center text-orange-600">
+                  <Heart size={20} fill="currentColor" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">New Donation</p>
+                  <p className="text-xs font-bold dark:text-white">Fresh Meals Available</p>
+                </div>
+              </motion.div>
               <div className="bg-primary-600 rounded-3xl w-full h-96 transform rotate-3 absolute inset-0 opacity-10"></div>
               <div className="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl relative border dark:border-gray-700 min-h-[400px]">
                 <div className="flex items-center justify-between mb-8">
@@ -223,13 +297,21 @@ export default function Home() {
                           key={donation.id}
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
+                          whileHover={{ 
+                            scale: 1.02, 
+                            x: 5,
+                            boxShadow: "0px 10px 30px rgba(0,0,0,0.05)" 
+                          }}
                           exit={{ opacity: 0, scale: 0.95 }}
-                          transition={{ delay: i * 0.1 }}
+                          transition={{ type: "spring", stiffness: 300 }}
                           className="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-transparent hover:border-primary-100 dark:hover:border-primary-900/30 transition-all cursor-pointer group"
                         >
-                          <div className="w-12 h-12 bg-primary-50 dark:bg-primary-900/30 rounded-xl flex items-center justify-center text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-colors">
+                          <motion.div 
+                            whileHover={{ rotate: [0, -10, 10, 0] }}
+                            className="w-12 h-12 bg-primary-50 dark:bg-primary-900/30 rounded-xl flex items-center justify-center text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-colors"
+                          >
                             <Package size={24} />
-                          </div>
+                          </motion.div>
                           <div className="flex-1 min-w-0">
                             <h5 className="font-bold text-gray-900 dark:text-white truncate text-sm sm:text-base">
                               {donation.foodName}
@@ -268,7 +350,7 @@ export default function Home() {
                   </Link>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>

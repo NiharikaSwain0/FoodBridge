@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { collection, onSnapshot, query, where, updateDoc, doc } from 'firebase/firestore';
+import { 
+  collection, 
+  onSnapshot, 
+  query, 
+  where, 
+  doc, 
+  updateDoc,
+  addDoc,
+  serverTimestamp
+} from 'firebase/firestore';
 import { db } from '../services/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import DashboardLayout from '../layouts/DashboardLayout';
@@ -16,6 +25,7 @@ import {
   Info
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Component to control map view
 function MapController({ center }) {
@@ -79,12 +89,28 @@ export default function NearbyDonations() {
 
   const handleAccept = async (donationId) => {
     try {
+      const donation = donations.find(d => d.id === donationId);
       await updateDoc(doc(db, 'donations', donationId), {
         status: 'accepted',
         receiverId: currentUser.uid,
         ngoName: userData?.displayName || 'Partner NGO',
         acceptedAt: new Date().toISOString()
       });
+
+      // Create notification for volunteers
+      try {
+        await addDoc(collection(db, 'notifications'), {
+          title: 'Pickup Available!',
+          message: `${donation?.foodName || 'Food'} needs to be picked up for ${userData?.displayName || 'NGO'}`,
+          type: 'acceptance',
+          targetRole: 'volunteer',
+          createdAt: serverTimestamp(),
+          readBy: []
+        });
+      } catch (notifErr) {
+        console.error("Failed to create notification:", notifErr);
+      }
+
       toast.success('Donation accepted! A volunteer will be notified.');
     } catch (err) {
       toast.error('Failed to accept donation');
@@ -127,18 +153,42 @@ export default function NearbyDonations() {
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
               </div>
             ) : filteredDonations.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <motion.div 
+                initial="hidden"
+                animate="show"
+                variants={{
+                  hidden: { opacity: 0 },
+                  show: {
+                    opacity: 1,
+                    transition: {
+                      staggerChildren: 0.1
+                    }
+                  }
+                }}
+                className="grid grid-cols-1 md:grid-cols-2 gap-6"
+              >
                 {filteredDonations.map((donation) => (
-                  <div 
+                  <motion.div 
                     key={donation.id} 
-                    className="bg-white dark:bg-gray-900 rounded-3xl shadow-sm border dark:border-gray-800 overflow-hidden hover:shadow-md transition-shadow group"
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      show: { opacity: 1, y: 0 }
+                    }}
+                    whileHover={{ 
+                      y: -10,
+                      scale: 1.02,
+                      transition: { duration: 0.2 }
+                    }}
+                    className="bg-white dark:bg-gray-900 rounded-3xl shadow-sm border dark:border-gray-800 overflow-hidden hover:shadow-xl transition-all group"
                   >
                     <div className="h-48 relative overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
                       {donation.imageUrl ? (
-                        <img 
+                        <motion.img 
+                          whileHover={{ scale: 1.1 }}
+                          transition={{ duration: 0.5 }}
                           src={donation.imageUrl} 
                           alt={donation.foodName}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          className="w-full h-full object-cover"
                           onError={(e) => {
                             e.target.onerror = null; 
                             e.target.src = 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=400&auto=format&fit=crop';
@@ -151,9 +201,13 @@ export default function NearbyDonations() {
                         </div>
                       )}
                       <div className="absolute top-4 left-4">
-                        <span className="bg-primary-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                        <motion.span 
+                          initial={{ x: -20, opacity: 0 }}
+                          animate={{ x: 0, opacity: 1 }}
+                          className="bg-primary-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg"
+                        >
                           {donation.category}
-                        </span>
+                        </motion.span>
                       </div>
                     </div>
                     <div className="p-6">
@@ -172,17 +226,19 @@ export default function NearbyDonations() {
                         </div>
                       </div>
                       {userData?.role === 'ngo' && (
-                        <button 
+                        <motion.button 
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
                           onClick={() => handleAccept(donation.id)}
-                          className="w-full bg-primary-600 text-white py-3 rounded-2xl font-bold hover:bg-primary-700 transition-all transform hover:scale-[1.02] flex items-center justify-center"
+                          className="w-full bg-primary-600 text-white py-3 rounded-2xl font-bold hover:bg-primary-700 transition-all shadow-lg shadow-primary-200 dark:shadow-none flex items-center justify-center"
                         >
                           Accept Donation <ChevronRight className="ml-2" size={18} />
-                        </button>
+                        </motion.button>
                       )}
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
             ) : (
               <div className="text-center py-20 bg-white dark:bg-gray-900 rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-800">
                 <Package className="mx-auto text-gray-300 mb-4" size={48} />

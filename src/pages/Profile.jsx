@@ -15,17 +15,30 @@ import {
   Truck
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { motion } from 'framer-motion';
 
 export default function Profile() {
   const { userData, updateUserData } = useAuth();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    displayName: userData?.displayName || '',
-    phoneNumber: userData?.phoneNumber || '',
-    address: userData?.address || '',
-    organization: userData?.organization || '',
-    role: userData?.role || 'donor'
+    displayName: '',
+    phoneNumber: '',
+    address: '',
+    organization: '',
+    role: ''
   });
+
+  React.useEffect(() => {
+    if (userData) {
+      setFormData({
+        displayName: userData.displayName || '',
+        phoneNumber: userData.phoneNumber || '',
+        address: userData.address || '',
+        organization: userData.organization || '',
+        role: userData.role || 'donor'
+      });
+    }
+  }, [userData]);
 
   const roles = [
     { id: 'donor', label: 'Donor', icon: Heart },
@@ -81,20 +94,29 @@ export default function Profile() {
               <h3 className="font-bold dark:text-white mb-4">Role Information</h3>
               <div className="space-y-4">
                 {roles.map((role) => (
-                  <div 
+                  <motion.div 
                     key={role.id}
-                    className={`flex items-center p-3 rounded-2xl border-2 transition-all ${
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className={`flex items-center justify-between p-3 rounded-2xl border-2 transition-all cursor-default ${
                       formData.role === role.id 
                         ? 'border-primary-600 bg-primary-50 dark:bg-primary-900/20' 
                         : 'border-transparent bg-gray-50 dark:bg-gray-800/50 grayscale opacity-60'
                     }`}
                   >
-                    <role.icon className={formData.role === role.id ? 'text-primary-600' : 'text-gray-400'} size={20} />
-                    <span className={`ml-3 text-sm font-bold ${formData.role === role.id ? 'text-primary-900 dark:text-primary-100' : 'text-gray-500'}`}>
-                      {role.label}
-                    </span>
-                  </div>
-                ))}
+                    <div className="flex items-center">
+                      <role.icon className={formData.role === role.id ? 'text-primary-600' : 'text-gray-400'} size={20} />
+                      <span className={`ml-3 text-sm font-bold ${formData.role === role.id ? 'text-primary-900 dark:text-primary-100' : 'text-gray-500'}`}>
+                        {role.label}
+                      </span>
+                    </div>
+                    {formData.role === role.id && (
+                       <span className="text-[10px] bg-primary-600 text-white px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                         Registered
+                       </span>
+                     )}
+                   </motion.div>
+                 ))}
               </div>
               <p className="text-[10px] text-gray-400 mt-4 leading-relaxed">
                 Roles define your permissions within the FoodBridge ecosystem. Changing roles may affect your dashboard access.
