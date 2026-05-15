@@ -171,12 +171,14 @@ export default function NearbyDonations() {
                           <span className="truncate">Pickup from Donor Location</span>
                         </div>
                       </div>
-                      <button 
-                        onClick={() => handleAccept(donation.id)}
-                        className="w-full bg-primary-600 text-white py-3 rounded-2xl font-bold hover:bg-primary-700 transition-all transform hover:scale-[1.02] flex items-center justify-center"
-                      >
-                        Accept Donation <ChevronRight className="ml-2" size={18} />
-                      </button>
+                      {userData?.role === 'ngo' && (
+                        <button 
+                          onClick={() => handleAccept(donation.id)}
+                          className="w-full bg-primary-600 text-white py-3 rounded-2xl font-bold hover:bg-primary-700 transition-all transform hover:scale-[1.02] flex items-center justify-center"
+                        >
+                          Accept Donation <ChevronRight className="ml-2" size={18} />
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -205,12 +207,14 @@ export default function NearbyDonations() {
                       <div className="p-2">
                         <p className="font-bold">{d.foodName}</p>
                         <p className="text-xs">{d.quantity}</p>
-                        <button 
-                          onClick={() => handleAccept(d.id)}
-                          className="mt-2 text-primary-600 font-bold text-xs"
-                        >
-                          Accept Now
-                        </button>
+                        {userData?.role === 'ngo' && (
+                          <button 
+                            onClick={() => handleAccept(d.id)}
+                            className="mt-2 text-primary-600 font-bold text-xs"
+                          >
+                            Accept Now
+                          </button>
+                        )}
                       </div>
                     </Popup>
                   </Marker>

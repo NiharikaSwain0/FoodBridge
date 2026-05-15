@@ -24,11 +24,15 @@ export default function Navbar() {
   };
 
   const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'Donate', path: '/donate' },
-    { name: 'Nearby', path: '/nearby-donations' },
-    { name: 'Heatmap', path: '/heatmap' },
+    { name: 'Home', path: '/', roles: ['all'] },
+    { name: 'Donate', path: '/donate', roles: ['donor'] },
+    { name: 'Nearby', path: '/nearby-donations', roles: ['ngo'] },
+    { name: 'Heatmap', path: '/heatmap', roles: ['all'] },
   ];
+
+  const filteredNavLinks = navLinks.filter(link => 
+    link.roles.includes('all') || (userData?.role && link.roles.includes(userData.role))
+  );
 
   return (
     <nav className="bg-white dark:bg-gray-900 shadow-lg sticky top-0 z-50 transition-colors duration-300">
@@ -39,7 +43,7 @@ export default function Navbar() {
               <span className="text-2xl font-bold text-primary-600">FoodBridge</span>
             </Link>
             <div className="hidden md:ml-6 md:flex md:space-x-8">
-              {navLinks.map((link) => (
+              {filteredNavLinks.map((link) => (
                 <Link
                   key={link.name}
                   to={link.path}
